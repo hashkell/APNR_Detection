@@ -1,1 +1,0 @@
-{'records_read': 23}

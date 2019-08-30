@@ -4,7 +4,7 @@ import os
 import re
 import json
 from urllib import request
-
+from urllib.error import URLError
 data_file_path = './Nplate.json'
 data_store_path = './data/'
 formats = [
@@ -16,7 +16,11 @@ formats = [
 
 image_key = ''
 annotation_key = ''
+class_key = ''
+points_key = ''
 records_read = 0
+
+classes = {'number_plate': 0}
 
 
 def parse_name(img_path):
@@ -31,8 +35,8 @@ def parse_name(img_path):
     return path, file
 
 
-def gen_data_from_json(feature_type='nd', target_vector='yolo'):
-    records_read = 0
+def gen_data_from_json():
+    global records_read
     with open(data_file_path, 'r') as f:
         f = list(f)
         for line in f[records_read:]:
@@ -46,7 +50,7 @@ def gen_data_from_json(feature_type='nd', target_vector='yolo'):
 
                 img = request.urlopen(img_path).read()
 
-                with open(data_store_path+root_name+extension, 'wb') as f:
+                with open(data_store_path+root_name+'.'+extension, 'wb') as f:
                     f.write(img)
                 with open(data_store_path+root_name+'.txt', 'w') as f:
                     annotations = data[annotation_key]
@@ -65,18 +69,28 @@ def gen_data_from_json(feature_type='nd', target_vector='yolo'):
                             annotation_string += str(val)+' '
                         f.write(annotation_string)
                 records_read += 1
-            except e:
+            except URLError:
+                continue
+            except RuntimeError:
                 summary = str(
                     {
                         'records_read': records_read,
                     }
                 )
-                with open('summary.txt', 'w') as f:
+                with open('iosummary.txt', 'w') as f:
+                    f.write(summary)
+            else:
+                summary = str(
+                    {
+                        'records_read': records_read,
+                    }
+                )
+                with open('iosummary.txt', 'w') as f:
                     f.write(summary)
 
 
 if __name__ == '__main__':
-    with open('summary.txt', 'r') as f:
+    with open('./iosummary.txt', 'r') as f:
         summary = eval(f.read())
         records_read = summary['records_read']
     with open('./config/ioconfig.txt', 'r') as f:
@@ -85,3 +99,4 @@ if __name__ == '__main__':
         annotation_key = config['annotation_key']
         points_key = config['points_key']
         class_key = config['class_key']
+    gen_data_from_json()

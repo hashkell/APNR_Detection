@@ -1,6 +1,6 @@
 {
 'image_key':'content',
-'annotation_key':'annotations',
+'annotation_key':'annotation',
 'class_key':'label',
 'points_key':'points'
 }
