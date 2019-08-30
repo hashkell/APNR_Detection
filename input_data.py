@@ -6,7 +6,7 @@ import json
 from urllib import request
 
 data_file_path = './Nplate.json'
-
+data_store_path = './data/'
 formats = [
     '.jpg',
     '.jpeg',
@@ -46,13 +46,23 @@ def gen_data_from_json(feature_type='nd', target_vector='yolo'):
 
                 img = request.urlopen(img_path).read()
 
-                with open(file, 'wb') as f:
+                with open(data_store_path+root_name+extension, 'wb') as f:
                     f.write(img)
-                with open(root_name+'.txt', 'w') as f:
+                with open(data_store_path+root_name+'.txt', 'w') as f:
                     annotations = data[annotation_key]
-
                     for annotation in annotations:
+                        lbl = classes[annotation[class_key][0]]
+                        p1, p2 = annotation[points_key]
+                        x1, y1 = p1['x'], p1['y']
+                        x2, y2 = p2['x'], p2['y']
+                        cx = (x1+x2)/2
+                        cy = (y1+y2)/2
+                        w = abs(x1-x2)
+                        h = abs(y1-y2)
+                        yolo_vector = [lbl, cx, cy, w, h]
                         annotation_string = ''
+                        for val in yolo_vector:
+                            annotation_string += str(val)+' '
                         f.write(annotation_string)
                 records_read += 1
             except e:
@@ -73,3 +83,5 @@ if __name__ == '__main__':
         config = eval(f.read())
         image_key = config['image_key']
         annotation_key = config['annotation_key']
+        points_key = config['points_key']
+        class_key = config['class_key']
