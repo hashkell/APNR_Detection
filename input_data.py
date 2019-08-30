@@ -5,7 +5,7 @@ import re
 import json
 from urllib import request
 
-data_file_path = ''
+data_file_path = './Nplate.json'
 
 formats = [
     '.jpg',
@@ -16,6 +16,7 @@ formats = [
 
 image_key = ''
 annotation_key = ''
+records_read = 0
 
 
 def parse_name(img_path):
@@ -32,7 +33,8 @@ def parse_name(img_path):
 
 def gen_data_from_json(feature_type='nd', target_vector='yolo'):
     records_read = 0
-    with list(open(dat_file_path)) as f:
+    with open(data_file_path, 'r') as f:
+        f = list(f)
         for line in f[records_read:]:
             data = json.loads(line.rstrip())
             img_path = data[image_key]
@@ -61,3 +63,13 @@ def gen_data_from_json(feature_type='nd', target_vector='yolo'):
                 )
                 with open('summary.txt', 'w') as f:
                     f.write(summary)
+
+
+if __name__ == '__main__':
+    with open('summary.txt', 'r') as f:
+        summary = eval(f.read())
+        records_read = summary['records_read']
+    with open('./config/ioconfig.txt', 'r') as f:
+        config = eval(f.read())
+        image_key = config['image_key']
+        annotation_key = config['annotation_key']
