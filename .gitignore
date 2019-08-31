@@ -1,6 +1,9 @@
-data/
+
 *.jpg
 *.jpeg
 *.tif
 *.png
+*.gif
 ./iosummary.txt
+data/*
+!data/*.json

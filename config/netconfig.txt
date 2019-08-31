@@ -1,0 +1,47 @@
+{
+
+'inpt_res': (480,480),
+
+'grid_size': 13,
+
+'n_bbox' : 3 ,
+
+'layers': [
+             {
+             'type':'conv2d',
+             'kernel_size':5,
+             'num_filters':128
+             },
+
+             {
+             'type':maxpool',
+             'strides':(2,2),
+             },
+             {
+             'type':'conv2d',
+             'kernel_size':5,
+             'num_filters':64
+             },
+             {
+             'type':'conv2d',
+             'kernel_size':3,
+             'num_filters':64
+             },
+             {
+             'type':'conv2d',
+             'kernel_size':3,
+             'num_filters':32
+             },
+             {
+             'type':'fully_connected',
+             'nodes': None
+             }
+
+
+            ],
+'optimizer' : {
+              'name':'adam',
+              'decay':0.5
+                }
+
+}
