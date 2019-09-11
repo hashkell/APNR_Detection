@@ -14,28 +14,32 @@
              },
 
              {
-             'type':maxpool',
+             'type': 'maxpool',
              'strides':(2,2),
              },
+
              {
              'type':'conv2d',
              'kernel_size':5,
              'num_filters':64
              },
+
              {
              'type':'conv2d',
              'kernel_size':3,
              'num_filters':64
              },
+
              {
              'type':'conv2d',
              'kernel_size':3,
              'num_filters':32
              },
+
              {
              'type':'fully_connected',
              'nodes': None
-             }
+             },
 
 
             ],

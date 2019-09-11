@@ -1,1 +1,1 @@
-{'records_read': 224}
+{'records_read': 222, 'data_read': True}
