@@ -71,7 +71,8 @@ def gen_data_from_json():
                 file_names_split = file.split('.')
                 root_name = file_names_split[0]
                 extension = file_names_split[-1]
-
+                if extension not in formats :
+                    continue
                 img = request.urlopen(img_path).read()
 
                 with open(data_store_path+root_name+'.'+extension, 'wb') as f:
@@ -89,7 +90,7 @@ def gen_data_from_json():
                         h = abs(y1-y2)
                         yolo_vector = [lbl, cx, cy, w, h]
 
-                        f.write(str(yolo_vector))
+                        f.write(str(yolo_vector)+'\n')
                 records_read += 1
             except URLError:
 
@@ -134,12 +135,22 @@ def gen_yolo_data():
     img_files, annotation_files = (sorted(list(img_files), key=sortf),
                                    (sorted(list(annotation_files), key=sortf)))
     for image, annotation in zip(img_files, annotation_files):
-        images.append(transform_image(cv2.imread(image)))
+        try :
+            
+            images.append(transform_image(cv2.imread(image)))
+        except  :
+            print(image)
+            continue
         target_vector = np.zeros((nx, ny, n_bboxes*5+len(classes)))
         with open(annotation, 'r') as f:
             targets = []
             for line in f:
-                targets.append(eval(line))
+                try:
+                    targets.append(eval(line))
+                    
+                except TypeError :
+                    print(line)
+                    print(annotation)
             targets = sorted(targets, key=lambda x: x[-1]*x[-2])
             dx = 1/nx
             dy = 1/ny
